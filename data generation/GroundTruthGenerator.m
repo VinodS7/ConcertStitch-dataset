@@ -1,5 +1,6 @@
 function GTmicro = GroundTruthGenerator(L1,L2,GTmacro)
-
+%% Creates the synthetic dataset
+%This function
 if(L1>L2)
     L1 = L2;
 end

@@ -1,14 +1,28 @@
-function [audio,stretchFactor] = audiogen(clean_audio,Fs,n)
-
-
-
-FilePath = '/Users/Anachronite/Documents/MATLAB/Vinod-7100-Spring2017/Noise samples/*.wav';
+function [audio,stretchFactor] = audiogen(clean_audio,Fs,n,FilePath)
+%% 
+%This code takes a cell containing a set of clean recordings and adds
+%different types of noise to it
+%Inputs: clean_audio  ->    a cell structure in which each cell represents an
+%                           audio array
+%        Fs           ->    Sampling rate of the audio files
+%        n            ->    Number of audio files
+%        FilePath     ->    File path to the location of the noise cheering
+%                           audio files
+%Outputs: audio       ->    A cell containing corrupted versions of the
+%                           the audio in clean_audio
+%         stretchFactor ->  Indicates the resample factor done on each
+%                           audio file
+%% Initializing
 files = dir(FilePath);
+%Setting the filter cutoffs
 Wp = [(11000)*rand+5000 (11000)*rand+5000 400*rand+200 400*rand+200];
 Ws = [Wp(1)+1000 Wp(2)+1000 70 70];
+%Setting the type of filter
 type = ['low ';'low ';'high';'high'];
-degrType = cell([2 1]);
 
+
+%Setting the type of degradation
+degrType = cell([2 1]);
 degrType{1} = 'smartPhoneRecording';
 degrType{2} = 'liveRecording';
 
@@ -46,8 +60,8 @@ e = 1;
     x = resample(x,FsNew,44100);
     audio{i} = x;
         audio{i} = applyDegradation(degrType{randi([1 2])},audio{i},Fs);
-%         audio{i} = applyDegradation('liveRecording',audio{i},Fs);
-%         audio{i} = applyDegradation('smartPhoneRecording',audio{i},Fs);
+         audio{i} = applyDegradation('liveRecording',audio{i},Fs);
+         audio{i} = applyDegradation('smartPhoneRecording',audio{i},Fs);
 
     ex =  sum(abs(audio{i}).^2)/length(audio{i});
     audio{i} = audio{i}*sqrt(e/ex);
